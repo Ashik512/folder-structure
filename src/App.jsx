@@ -10,26 +10,23 @@ function App() {
 
   function insertNode(tree, folderId, title) {
     if (tree.id === folderId) {
-      tree.items.push({
-        id: new Date().getTime(),
-        title: title,
-        items: [],
-      });
-
-      return tree;
+      return {
+        ...tree,
+        items: [
+          ...tree.items,
+          { id: new Date().getTime(), title: title, items: [] },
+        ],
+      };
     }
 
-    let latestNode = [];
-    latestNode = tree.items.map((ob) => {
-      return insertNode(ob, folderId, title);
-    });
-
-    return { ...tree, items: latestNode };
+    return {
+      ...tree,
+      items: tree.items.map((item) => insertNode(item, folderId, title)),
+    };
   }
 
   function insert(folderId, title) {
-    const finalData = insertNode(data, folderId, title);
-    setData(finalData);
+    setData((prevData) => insertNode(prevData, folderId, title));
   }
 
   useEffect(() => {
